@@ -5,6 +5,7 @@ import CarSelector from "./Components/CarSelector"
 import StarRatingWhole from "./Components/StarRatingWhole"
 import axios from 'axios';
 
+
 function App() {
   const [jsonFile,setJson] = useState(null);
   const [dataAvalMark,setDataAvalMark] = useState(false)
@@ -24,6 +25,7 @@ function App() {
     const fetchData = async () => {
       const result = await axios(
         'http://192.168.2.174/olek/podpanel_oceny/function.php',
+       /*  'http://192.168.0.80/olek/react-with-php-test/function.php', */
       );
         
       console.log(result.data)
@@ -93,6 +95,8 @@ function App() {
       {dataAvalGeneration ?  (<CarSelector whichSelector={"Generations"} jsonFile={jsonFileGeneration} onSelectorClicked={onSelectorClicked}/>) : "nothing3"   }
       
         <StarRatingWhole />
+
+        
       
       
 
