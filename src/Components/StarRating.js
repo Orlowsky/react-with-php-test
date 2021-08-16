@@ -14,17 +14,26 @@ import Box from '@material-ui/core/Box';
 
 
 
-const StarRating = () => {
+const StarRating = ({whichRating, dataRating, addValueToDataForm, id}) => {
+
+  let dataRatingNewTest = dataRating
+  let addValueStar = (e) =>{
+    console.log(dataRatingNewTest, e.target.value)
+    addValueToDataForm(dataRatingNewTest,e.target.value)
+  }
+
     return (
         <div>
-        {    <Box component="fieldset" mb={3} borderColor="transparent">
-        <Typography component="legend">Custom empty icon</Typography>
-        <Rating
-          name="customized-empty"
-          defaultValue={2}
+          
+        {<Box component="fieldset" mb={3} borderColor="transparent">
+        <Typography component="legend">{whichRating}</Typography>
+        <Rating id={id+"-Rating"}
+        
+          name={"unique-rating-"+id}
+          defaultValue={2.5}
           precision={0.5}
           emptyIcon={<StarBorderIcon fontSize="inherit" />}
-          onChange={(e)=>console.log(e.target.value)}
+          onChange={addValueStar}
         />
       </Box>}
         </div>

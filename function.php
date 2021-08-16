@@ -4,9 +4,10 @@ header("Access-Control-Allow-Origin: *");
 $mysqli->set_charset("utf8mb4"); */
 $mysqli = new mysqli('localhost','root','','omlcsplvskdev2am' ) or die(mysqli_error($mysqli));
 $mysqli->set_charset("utf8mb4");
-
-if(count($_GET)==0){
 $arrayOfMarks = [];
+$myJSON = null;
+if(count($_GET)==0){
+
 $checkResult = $mysqli->query("SELECT id,url,mark,photo_url FROM marks WHERE status=1 ORDER BY mark ASC") or die($mysqli1->error);
 				 while ($checkRow2 = $checkResult->fetch_assoc()){
                     
@@ -35,7 +36,7 @@ $checkResult = $mysqli->query("SELECT id,url,mark,photo_url FROM marks WHERE sta
                  echo $myJSON;
                 }elseif ((count($_GET)!=0) && (isset($_GET['whichSelector'])) && (isset($_GET['id'])) && $_GET['whichSelector']==="Marks"){
                     $get_id =$_GET['id'] ;
-                    $arrayOfMarks = [];
+                   
                     $checkResult = $mysqli->query("SELECT id,url,model,photo_url FROM models WHERE (idOfMark='$get_id' AND status=1) ORDER BY model ASC ") or die($mysqli1->error);
 				 while ($checkRow2 = $checkResult->fetch_assoc()){
                     
@@ -65,7 +66,7 @@ $checkResult = $mysqli->query("SELECT id,url,mark,photo_url FROM marks WHERE sta
 
                 }elseif ((count($_GET)!=0) && (isset($_GET['whichSelector'])) && (isset($_GET['id'])) && $_GET['whichSelector']==="Models"){
                     $get_id =$_GET['id'] ;
-                    $arrayOfMarks = [];
+                 
                     $checkResult = $mysqli->query("SELECT id,url,generation,photo_url,start,end FROM generations WHERE idOfModel='$get_id' AND status=1 ORDER BY start ASC") or die($mysqli1->error);
 				 while ($checkRow2 = $checkResult->fetch_assoc()){
                     
@@ -93,7 +94,99 @@ $checkResult = $mysqli->query("SELECT id,url,mark,photo_url FROM marks WHERE sta
 
                  echo $myJSON;
 
-                }
+                }elseif ((count($_GET)!=0) && (isset($_GET['whichSelector'])) && (isset($_GET['id'])) && $_GET['whichSelector']==="Generations"){
+                  $get_id =$_GET['id'] ;
+               
+                  $checkResult = $mysqli->query("SELECT id,url,body,photo_url,start,end FROM bodies WHERE idOfGeneration='$get_id' AND status=1 ORDER BY start ASC ") or die($mysqli1->error);
+       while ($checkRow2 = $checkResult->fetch_assoc()){
+                  
+                  /* foreach ($checkRow2 as $key => $value) {
+                    $fullContentBody = $fullContentBody ."<td scope='col'>".$value."</td> ";
+                    } */
+
+                    $myObj = new stdClass();
+                  
+
+                    $myObj->id = $checkRow2["id"];
+                    $myObj->mark = $checkRow2['body'];
+
+                    array_push($arrayOfMarks, $myObj);
+
+
+                    
+      
+               }
+
+
+
+
+               $myJSON = json_encode($arrayOfMarks);
+
+               echo $myJSON;
+               
+
+              }elseif ((count($_GET)!=0) && (isset($_GET['whichSelector'])) && (isset($_GET['id'])) && $_GET['whichSelector']==="Bodies"){
+                $get_id =$_GET['id'] ;
+             
+                $checkResult = $mysqli->query("SELECT id, engine,type,power,capacity,start,engine_full_name FROM engines WHERE idOfBody='$get_id' AND status=1 ") or die($mysqli1->error);
+     while ($checkRow2 = $checkResult->fetch_assoc()){
+                
+                /* foreach ($checkRow2 as $key => $value) {
+                  $fullContentBody = $fullContentBody ."<td scope='col'>".$value."</td> ";
+                  } */
+
+                  $myObj = new stdClass();
+                
+
+                  $myObj->id = $checkRow2["id"];
+                  $myObj->mark = $checkRow2['engine_full_name'];
+
+                  array_push($arrayOfMarks, $myObj);
+
+
+                  
+    
+             }
+
+
+
+
+             $myJSON = json_encode($arrayOfMarks);
+
+             echo $myJSON;
+
+            }elseif ((count($_GET)!=0) && (isset($_GET['whichSelector'])) && (isset($_GET['id'])) && $_GET['whichSelector']==="Engines"){
+              $get_id =$_GET['id'] ;
+           
+              $checkResult = $mysqli->query("SELECT id,gearbox,gears FROM gearboxes WHERE idOfEngine='$get_id' ") or die($mysqli1->error);
+   while ($checkRow2 = $checkResult->fetch_assoc()){
+              
+              /* foreach ($checkRow2 as $key => $value) {
+                $fullContentBody = $fullContentBody ."<td scope='col'>".$value."</td> ";
+                } */
+
+                $myObj = new stdClass();
+              
+
+                $myObj->id = $checkRow2["id"];
+                $myObj->mark = $checkRow2['gearbox'];
+
+                array_push($arrayOfMarks, $myObj);
+
+
+                
+  
+           }
+
+
+
+
+           $myJSON = json_encode($arrayOfMarks);
+
+           echo $myJSON;
+
+          }
+
 
 
 

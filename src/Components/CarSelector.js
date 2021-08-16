@@ -1,5 +1,5 @@
 import React from 'react'
-import  { useState,  } from 'react';
+import  { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import InputLabel from '@material-ui/core/InputLabel';
@@ -19,33 +19,41 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-const CarSelector = ({jsonFile,onSelectorClicked,whichSelector}) => {
+const CarSelector = ({jsonFile,onSelectorClicked,whichSelector, addValueToDataForm}) => {
     const classes = useStyles();
-    const [state, setState] = useState('1');
+    const [state, setState] = useState("");
 
     let selectorChange= (e)=>{
         onSelectorClicked(e.target.value,whichSelector)
+        addValueToDataForm(whichSelector, e.target.value)
         console.log(e)
         setState(e.target.value)
+      
     }
+
+    useEffect(() => {
+      // Zaktualizuj tytuł dokumentu korzystając z interfejsu API przeglądarki
+      /* setState(jsonFile[0].id) */
+    },[]); // albo mozna tu załadowac zmienne ktore ma sprawdzac :*
 
     return (
         <div>
          <FormControl variant="outlined" className={classes.formControl}>
-        <InputLabel id="demo-simple-select-outlined-label">Mark</InputLabel>
+        <InputLabel id="demo-simple-select-outlined-label">{whichSelector}</InputLabel>
         <Select className={whichSelector}
           labelId="demo-simple-select-outlined-label"
           id="demo-simple-select-outlined"
+          
           value={state}
           onChange={selectorChange}
-          label="Age"
+          label={whichSelector}
           
         >
           {/* {<MenuItem value="">
             <em>None</em>
           </MenuItem>} */}
-          {jsonFile.map(item=>(
-                <MenuItem key={item.id}  value={item.id}>{item.mark}</MenuItem>
+          {jsonFile.map((item,index)=>(
+                <MenuItem key={"menu-item-"+item.id}  value={item.id}>{item.mark}</MenuItem>
           ))}
           {/* <MenuItem  value={10}>Ten</MenuItem>
           <MenuItem value={20}>Twenty</MenuItem>
