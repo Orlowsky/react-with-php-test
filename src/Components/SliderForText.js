@@ -11,7 +11,7 @@ const SliderForText = ({prosAndCons,addValueToProsAndCons}) => {
 
     let changeNumberInputs = (event,value) => {
       setNumberInput(value)
-        
+      setDataOutput([...dataOutput].slice(0,value))
     }
 
     let onTextFieldValueChange = (e) =>{
@@ -42,7 +42,7 @@ const SliderForText = ({prosAndCons,addValueToProsAndCons}) => {
       console.log(dataOutput)
       addValueToProsAndCons(prosAndCons,dataOutput)
       
-    },[numberInput, dataOutput])
+    },[numberInput, dataOutput, addValueToProsAndCons, prosAndCons])
 
 
     return (

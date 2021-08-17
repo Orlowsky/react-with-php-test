@@ -29,28 +29,36 @@ function App() {
   const [jsonFileGearbox,setJsonGearbox] = useState(null);
   const [dataAvalGearbox,setDataAvalGearbox] = useState(false)
 
-  const [wholeDataFormToSend, setWholeDataFormToSend] = useState([])
-  const [wholeDataFormToSendPros,setWholeDataFormToSendPros] = useState(null)
-  const [wholeDataFormToSendCons,setWholeDataFormToSendCons] = useState(null)
+  const [wholeDataFormToSendCar, setWholeDataFormToSendCar] = useState([])
+  const [wholeDataFormToSendRating, setWholeDataFormToSendRating] = useState([])
+  const [wholeDataFormToSendPros,setWholeDataFormToSendPros] = useState([])
+  const [wholeDataFormToSendCons,setWholeDataFormToSendCons] = useState([])
 
-  let addValueToDataForm = (newDataName, newValueData ) =>{
-    const temporaryArray = [...wholeDataFormToSend]
+  const [sendDataInfoBack,setSendDataInfoBack] = useState(null)
+
+  let addValueToDataFormCar = (newDataName, newValueData ) =>{
+    const temporaryArray = [...wholeDataFormToSendCar]
     let temporaryCheck = false;
     for(let i=0;i<temporaryArray.length;i++){
       if(temporaryArray[i].dataName ===newDataName){
         temporaryArray[i].dataName = newDataName;
         temporaryArray[i].dataValue = newValueData;
-        console.log("istnieje")
         temporaryCheck = true ;
       }
     }
-
-    if(temporaryCheck){
-    setWholeDataFormToSend([...temporaryArray])
-    }else{
-      setWholeDataFormToSend([...wholeDataFormToSend, {dataName:newDataName, dataValue:newValueData}])
+    temporaryCheck ? setWholeDataFormToSendCar([...temporaryArray]) : setWholeDataFormToSendCar([...wholeDataFormToSendCar, {dataName:newDataName, dataValue:newValueData}])
+  }
+  let addValueToDataFormRating = (newDataName, newValueData ) =>{
+    const temporaryArray = [...wholeDataFormToSendRating]
+    let temporaryCheck = false;
+    for(let i=0;i<temporaryArray.length;i++){
+      if(temporaryArray[i].dataName ===newDataName){
+        temporaryArray[i].dataName = newDataName;
+        temporaryArray[i].dataValue = newValueData;
+        temporaryCheck = true ;
+      }
     }
-    
+    temporaryCheck ? setWholeDataFormToSendRating([...temporaryArray]) : setWholeDataFormToSendRating([...wholeDataFormToSendRating, {dataName:newDataName, dataValue:newValueData}])
   }
 
   let addValueToProsAndCons=(prosOrCons, data)=>{
@@ -63,7 +71,6 @@ setWholeDataFormToSendPros(data)
   }
 
   useEffect(() => {
-    console.log(wholeDataFormToSendPros, wholeDataFormToSendCons)
     
     const fetchData = async () => {
       const result = await axios(
@@ -139,27 +146,43 @@ setWholeDataFormToSendPros(data)
  }
     
 
-  });
+  },[jsonFileCarSetup,dataAvalBody,dataAvalEngine, dataAvalGearbox, dataAvalGeneration, dataAvalMark, dataAvalModel]);
 
   let onSelectorClicked = (selectTarget, whichSelector) =>{
    
     console.log("clicked",selectTarget,whichSelector)
     if(whichSelector==="Marks"){
       //tu mozna zerowac poprzednie jbc
+      setDataAvalModel(false)
+      setDataAvalGeneration(false)
+      setDataAvalBody(false)
+      setDataAvalEngine(false)
+      setDataAvalGearbox(false)
       setJsonFileCarSetup({id:selectTarget,whichSelectorToChoose:"Marks"})
     }else if(whichSelector==="Models"){
       console.log("elo")
+      setDataAvalGeneration(false)
+      setDataAvalBody(false)
+      setDataAvalEngine(false)
+      setDataAvalGearbox(false)
       setJsonFileCarSetup({id:selectTarget,whichSelectorToChoose:"Models"})
     }else if(whichSelector==="Generations"){
       console.log("elo2")
+      setDataAvalBody(false)
+      setDataAvalEngine(false)
+      setDataAvalGearbox(false)
       setJsonFileCarSetup({id:selectTarget,whichSelectorToChoose:"Generations"})
       /* setJsonFileModelSetup({id:selectTarget,whichSelectorToChoose:whichSelector}) */
     }else if(whichSelector==="Bodies"){
-      console.log("elo2")
+      setDataAvalEngine(false)
+      setDataAvalGearbox(false)
+     
       setJsonFileCarSetup({id:selectTarget,whichSelectorToChoose:"Bodies"})
       /* setJsonFileModelSetup({id:selectTarget,whichSelectorToChoose:whichSelector}) */
     }else if(whichSelector==="Engines"){
-      console.log("elo2")
+      
+      setDataAvalGearbox(false)
+    
       setJsonFileCarSetup({id:selectTarget,whichSelectorToChoose:"Engines"})
       /* setJsonFileModelSetup({id:selectTarget,whichSelectorToChoose:whichSelector}) */
     }else if(whichSelector==="Gearboxes"){
@@ -170,40 +193,102 @@ setWholeDataFormToSendPros(data)
     
 
   }
-//mozna to zrobic tak ze bedzie sprawdzał to zmienne useEffect i resetowac te powyzej i powinno byc git 
-//zabezpieczenia 
+
+  let checkArraysDataBeforeSend = (car, ratings, cons,pros) => {
+   if(car.length < 6 ){
+    return ({info:"Brakuje Danych O pojeździe", infoBolean:true });
+   }else if(ratings.length < 14){
+     return ({info: "Brakuje Danych O Ocenach" , infoBolean:true });
+   }else if(cons.length < 1){
+    return ({info : "Brakuje Danych O Wadach" , infoBolean:true });
+   }else if(pros.length < 1){
+    return ({info : "Brakuje Danych O Zaletach" , infoBolean:true });
+   }else{
+    return({info : "GiT" , infoBolean:false })
+   }
+    
+    
+  
+  }
+
+  let  sendFullDataToBackend = async() =>{
+    let valueCheck =  checkArraysDataBeforeSend(wholeDataFormToSendCar, wholeDataFormToSendRating, wholeDataFormToSendCons, wholeDataFormToSendPros)
+    console.log(valueCheck)
+   if(!valueCheck.infoBolean){
+    let fullDataToSend = {car:wholeDataFormToSendCar, ratings: wholeDataFormToSendRating, cons:wholeDataFormToSendCons, pros:wholeDataFormToSendPros}
+    console.log(fullDataToSend)
+    const jSonToSend = JSON.stringify(fullDataToSend);
+    const res = await axios.post('http://192.168.2.174/olek/podpanel_oceny/sendResponse.php', jSonToSend);
+    console.log(res.data)
+    console.log(valueCheck.info)
+   }else{
+     console.log(valueCheck.info)
+   }
+    
+  /*   setSendDataInfoBack(res.data) */
+  } 
+
+  let clearAllData = () =>{
+    console.log("clear")
+  }
+
+
+
+
 //czyscic dane ogolnie i gdy liczba pol zmaleje 
-//stworzyc wspolny element wysyłajacy dane  
+// zabezpiecz pola przed nie wystawieniem ocen, zabezpiecz przed zmiana danych
+//dodaj do bazy i sprawdz czy sie udało i zwrotka
+// pobierz wszystkie oceny do edycji
+
   return (
     <div className="App">
       <h1>Panel Oceny</h1>
       <h2>Wybierz pojazd z listy </h2>
-      {dataAvalMark ?  (<CarSelector whichSelector={"Marks"} jsonFile={jsonFile} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataForm}/>) : "nothing"   }
-      {dataAvalModel ?  (<CarSelector whichSelector={"Models"} jsonFile={jsonFileModel}  onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataForm}/>) : "nothing2"   }
-      {dataAvalGeneration ?  (<CarSelector whichSelector={"Generations"} jsonFile={jsonFileGeneration} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataForm}/>) : "nothing3"   }
-      {dataAvalBody ?  (<CarSelector whichSelector={"Bodies"} jsonFile={jsonFileBody} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataForm}/>) : "nothing4"   }
-      {dataAvalEngine ?  (<CarSelector whichSelector={"Engines"} jsonFile={jsonFileEngine} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataForm}/>) : "nothing5"   }
-      {dataAvalGearbox ?  (<CarSelector whichSelector={"Gearboxes"} jsonFile={jsonFileGearbox} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataForm}/>) : "nothing6"   }
+      {dataAvalMark ?  (<CarSelector whichSelector={"Marks"} jsonFile={jsonFile} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing"   }
+      {dataAvalModel ?  (<CarSelector whichSelector={"Models"} jsonFile={jsonFileModel}  onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing2"   }
+      {dataAvalGeneration ?  (<CarSelector whichSelector={"Generations"} jsonFile={jsonFileGeneration} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing3"   }
+      {dataAvalBody ?  (<CarSelector whichSelector={"Bodies"} jsonFile={jsonFileBody} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing4"   }
+      {dataAvalEngine ?  (<CarSelector whichSelector={"Engines"} jsonFile={jsonFileEngine} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing5"   }
+      {dataAvalGearbox ?  (<CarSelector whichSelector={"Gearboxes"} jsonFile={jsonFileGearbox} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing6"   }
       
       <h2>Wybierz ocene </h2>
-        <StarRatingWhole  addValueToDataForm={addValueToDataForm}/>
+        <StarRatingWhole  addValueToDataForm={addValueToDataFormRating}/>
         <h2>Podaj wady i zalety </h2>
     <div style={{display:"flex" }}>
     <SliderForText prosAndCons="Zalety" addValueToProsAndCons={addValueToProsAndCons}/>
 <SliderForText prosAndCons="Wady" addValueToProsAndCons={addValueToProsAndCons} />
 
     </div>
-        
 
-
-
-        <Button variant="contained" color="primary">
+    <div style={{display:"flex", justifyContent : 'center'}}>
+    <Button variant="contained" color="primary" onClick={(e)=>{sendFullDataToBackend()}}>
         Wyślij
       </Button>
+        <Button variant="contained" color="secondary" onClick={(e)=>{clearAllData()}}>
+        Wyczyść dane
+      </Button>
+      </div>    
+    
       
-      {wholeDataFormToSend.map(function(d, idx){
+      {wholeDataFormToSendCar.map(function(d, idx){
          return (<li key={idx}>{d.dataName}, {d.dataValue}</li>)
        })}
+
+       <br></br>
+        {wholeDataFormToSendRating.map(function(d, idx){
+         return (<li key={idx}>{d.dataName}, {d.dataValue}</li>)
+       })}
+ <br></br>
+{wholeDataFormToSendPros.map(function(d, idx){
+         return (<li key={idx}>{d.name}, {d.value}</li>)
+       })}
+ <br></br>
+{wholeDataFormToSendCons.map(function(d, idx){
+         return (<li key={idx}>{d.name}, {d.value}</li>)
+       })}
+        <br></br>
+  
+  <li>{sendDataInfoBack}</li>
 
       
     </div>

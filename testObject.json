@@ -1,0 +1,106 @@
+{
+    "car": [
+        {
+            "dataName": "Marks",
+            "dataValue": "8"
+        },
+        {
+            "dataName": "Models",
+            "dataValue": "70"
+        },
+        {
+            "dataName": "Generations",
+            "dataValue": "843"
+        },
+        {
+            "dataName": "Bodies",
+            "dataValue": "187"
+        },
+        {
+            "dataName": "Engines",
+            "dataValue": "1427"
+        },
+        {
+            "dataName": "Gearboxes",
+            "dataValue": "7533"
+        }
+    ],
+    "ratings": [
+        {
+            "dataName": "rating_caloksztalt",
+            "dataValue": 4
+        },
+        {
+            "dataName": "rating_silnik",
+            "dataValue": 4
+        },
+        {
+            "dataName": "rating_skrzynia_biegow",
+            "dataValue": 3.5
+        },
+        {
+            "dataName": "rating_uklad_jezdny",
+            "dataValue": 4
+        },
+        {
+            "dataName": "rating_ergonomia",
+            "dataValue": 3
+        },
+        {
+            "dataName": "rating_widocznosc",
+            "dataValue": 3
+        },
+        {
+            "dataName": "rating_wentylacja_ogrzewanie",
+            "dataValue": 4
+        },
+        {
+            "dataName": "rating_wyciszenie",
+            "dataValue": 4
+        },
+        {
+            "dataName": "rating_przestrzen",
+            "dataValue": 4
+        },
+        {
+            "dataName": "rating_karoseria",
+            "dataValue": 2
+        },
+        {
+            "dataName": "rating_utrzymanie",
+            "dataValue": 3.5
+        },
+        {
+            "dataName": "rating_cena_jakosc",
+            "dataValue": 4
+        },
+        {
+            "dataName": "rating_bezawaryjnosc_podstawowa",
+            "dataValue": 3
+        },
+        {
+            "dataName": "rating_bezawaryjnosc_powazne",
+            "dataValue": 2.5
+        }
+    ],
+    "cons": [
+        {
+            "name": "textfield-Wady-0",
+            "value": "asdasd"
+        },
+        {
+            "name": "textfield-Wady-1",
+            "value": "asdasda"
+        }
+    ],
+    "pros": [
+        {
+            "name": "textfield-Zalety-0",
+            "value": "sadas"
+        },
+        {
+            "name": "textfield-Zalety-1",
+            "value": "asdasd"
+        }
+    ]
+}
