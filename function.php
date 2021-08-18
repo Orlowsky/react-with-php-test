@@ -7,7 +7,6 @@ $mysqli->set_charset("utf8mb4");
 $arrayOfMarks = [];
 $myJSON = null;
 if(count($_GET)==0){
-
 $checkResult = $mysqli->query("SELECT id,url,mark,photo_url FROM marks WHERE status=1 ORDER BY mark ASC") or die($mysqli1->error);
 				 while ($checkRow2 = $checkResult->fetch_assoc()){
                     
@@ -186,6 +185,8 @@ $checkResult = $mysqli->query("SELECT id,url,mark,photo_url FROM marks WHERE sta
            echo $myJSON;
 
           }
+
+
 
 
 

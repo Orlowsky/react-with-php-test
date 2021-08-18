@@ -219,10 +219,18 @@ setWholeDataFormToSendPros(data)
     console.log(fullDataToSend)
     const jSonToSend = JSON.stringify(fullDataToSend);
     const res = await axios.post('http://192.168.2.174/olek/podpanel_oceny/sendResponse.php', jSonToSend);
-    console.log(res.data)
     console.log(valueCheck.info)
+    console.log(res)
+    if(res.statusText === "OK"){
+      setSendDataInfoBack(res.data)
+    }else{
+      setSendDataInfoBack(res.data)
+    }
+    
+    
    }else{
      console.log(valueCheck.info)
+     setSendDataInfoBack(valueCheck.info)
    }
     
   /*   setSendDataInfoBack(res.data) */
@@ -243,6 +251,8 @@ setWholeDataFormToSendPros(data)
   return (
     <div className="App">
       <h1>Panel Oceny</h1>
+      <div style={{display:"flex", justifyContent:"center"}}>
+      <div>
       <h2>Wybierz pojazd z listy </h2>
       {dataAvalMark ?  (<CarSelector whichSelector={"Marks"} jsonFile={jsonFile} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing"   }
       {dataAvalModel ?  (<CarSelector whichSelector={"Models"} jsonFile={jsonFileModel}  onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing2"   }
@@ -250,6 +260,10 @@ setWholeDataFormToSendPros(data)
       {dataAvalBody ?  (<CarSelector whichSelector={"Bodies"} jsonFile={jsonFileBody} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing4"   }
       {dataAvalEngine ?  (<CarSelector whichSelector={"Engines"} jsonFile={jsonFileEngine} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing5"   }
       {dataAvalGearbox ?  (<CarSelector whichSelector={"Gearboxes"} jsonFile={jsonFileGearbox} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing6"   }
+      </div>
+      <div><h2>Edytuj Pojazd </h2> </div>
+
+      </div>
       
       <h2>Wybierz ocene </h2>
         <StarRatingWhole  addValueToDataForm={addValueToDataFormRating}/>
@@ -267,7 +281,10 @@ setWholeDataFormToSendPros(data)
         <Button variant="contained" color="secondary" onClick={(e)=>{clearAllData()}}>
         Wyczyść dane
       </Button>
-      </div>    
+      </div>
+      {sendDataInfoBack}
+      
+       
     
       
       {wholeDataFormToSendCar.map(function(d, idx){
@@ -288,7 +305,7 @@ setWholeDataFormToSendPros(data)
        })}
         <br></br>
   
-  <li>{sendDataInfoBack}</li>
+ 
 
       
     </div>

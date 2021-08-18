@@ -45,19 +45,18 @@ $cons = json_encode($data->cons);
 
 
 
-/* $mysqli->query("INSERT INTO marks (mark_id,model_id,generation_id,body_id,engine_id, gearbox_id,
-rating_caloksztalt, rating_silnik, rating_skrzynia_biegow, rating_uklad_jezdny,rating_karoseria, rating_widocznosc, rating_ergonomia, rating_wentylacja_ogrzewanie,
-rating_wyciszenie, rating_przestrzen, rating_utrzymanie, rating_cena_jakosc, rating_bezawaryjnosc_podstawowa, rating_bezawaryjnosc_powazne
-rating_pozytywny,rating_negatywny
-)
- VALUES("$car_id[0]",  "$car_id[1]", "$car_id[2]","$car_id[3]","$car_id[4]","$car_id[5]","$ratings_id[0]") or die($mysqli->error); */
+$mysqli->query("INSERT INTO oceny (mark_id,model_id,generation_id,body_id,engine_id, gearbox_id,rating_caloksztalt, rating_silnik, rating_skrzynia_biegow, rating_uklad_jezdny,rating_karoseria, rating_widocznosc, rating_ergonomia, rating_wentylacja_ogrzewanie,rating_wyciszenie, rating_przestrzen, rating_utrzymanie, rating_cena_jakosc, rating_bezawaryjnosc_podstawowa, rating_bezawaryjnosc_powazne, rating_pozytywny,rating_negatywny)
+ VALUES('$car_id[0]',  '$car_id[1]', '$car_id[2]','$car_id[3]','$car_id[4]','$car_id[5]','$ratings_id[0]','$ratings_id[1]','$ratings_id[2]','$ratings_id[3]','$ratings_id[4]','$ratings_id[5]','$ratings_id[6]','$ratings_id[7]','$ratings_id[8]','$ratings_id[9]','$ratings_id[10]','$ratings_id[11]','$ratings_id[12]','$ratings_id[13]','$pros', '$cons')") or die($mysqli->error);
+
+if( $mysqli->affected_rows==1){
+    echo "Dane zostały wysłane pomyślnie ";
+}else{
+    echo "No Insert";
+}
 
 
 
 
-
-
-echo json_encode($car_id)
 
 
 
