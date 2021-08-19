@@ -1,15 +1,41 @@
 
 import './App.css';
 import React, { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import CarSelector from "./Components/CarSelector"
 import StarRatingWhole from "./Components/StarRatingWhole"
 import SliderForText from "./Components/SliderForText"
+import EditSelector from "./Components/EditSelector"
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
 import axios from 'axios';
 
 
+const useStyles = makeStyles({
+  root: {
+    minWidth: 275,
+  },
+  bullet: {
+    display: 'inline-block',
+    margin: '0 2px',
+    transform: 'scale(0.8)',
+  },
+  title: {
+    fontSize: 14,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+});
+
 function App() {
+  const classes = useStyles();
   /* const [jsonFile,setJson] = useState([{id:"1",mark:"bmw"},{id:"2",mark:"audi"}]); */
+  /* editData */
+  const [editData,setEditData] = useState(null)
+
   const [jsonFile,setJson] = useState(null);
   const [dataAvalMark,setDataAvalMark] = useState(false)
   const [jsonFileCarSetup,setJsonFileCarSetup] = useState({id:null,whichSelectorToChoose:null})
@@ -35,6 +61,8 @@ function App() {
   const [wholeDataFormToSendCons,setWholeDataFormToSendCons] = useState([])
 
   const [sendDataInfoBack,setSendDataInfoBack] = useState(null)
+
+  const[ratingPageDataForPage,setRatingPageDataForPage] = useState(null)
 
   let addValueToDataFormCar = (newDataName, newValueData ) =>{
     const temporaryArray = [...wholeDataFormToSendCar]
@@ -78,11 +106,22 @@ setWholeDataFormToSendPros(data)
        /*  'http://192.168.0.80/olek/react-with-php-test/function.php', */
       );
         
-      console.log(result.data)
+     
       setJson(result.data)
       setDataAvalMark(true)
       
     };
+    const fetchEditData = async() => {
+      const result = await axios(
+        'http://192.168.2.174/olek/podpanel_oceny/editData.php',
+       
+      );
+      console.log(result.data)
+       setEditData(result.data) 
+
+    }
+
+
     const fetchDataModel = async () => {
       const result = await axios(
         'http://192.168.2.174/olek/podpanel_oceny/function.php?id='+jsonFileCarSetup.id+"&whichSelector="+jsonFileCarSetup.whichSelectorToChoose,
@@ -143,6 +182,10 @@ setWholeDataFormToSendPros(data)
 
  if(!dataAvalMark){
   fetchData();
+ }
+
+ if(!editData){
+  fetchEditData()
  }
     
 
@@ -211,12 +254,72 @@ setWholeDataFormToSendPros(data)
   
   }
 
+  let newArrayStar = (data,whichdata,text)=>{
+   return  `<div class="rating-one" style="display: flex;justify-content: flex-start;"> <p class="ratingName">${text}</p><div class="ratingValue">${new Array(data.ratings[whichdata].dataValue).fill(null).map(el=>"<img src='https://dev.automotyw.com/wp-content/uploads/2021/08/star_gold.svg'>")}</div> </div>`
+  }
+
+  let createScriptForMarks = (fullData) =>{
+
+    
+      console.log(fullData)
+      let array=[];
+      let fullString = `
+    
+
+<h1>Oceny</h1>
+<h2> Mercedes GLS X166 Off-Tourer</h2>
+<div id='ratingContainer' class='rating-container' style="
+display: flex;">
+<div class="leftPart-rating-container">
+<div class="leftPart-one"> 
+<h3>Wrażenia</h3>
+${newArrayStar(fullData,0,"Całokształt")}
+${newArrayStar(fullData,1,"Silnik")}
+${newArrayStar(fullData,2,"Skrzynia Biegów")}
+${newArrayStar(fullData,2,"Układ Jezdny")}
+</div> 
+<div class="leftPart-one"> 
+<h3>Komfort</h3>
+<div class="rating-one" style="display: flex;justify-content: flex-start;"> <p class="ratingName">widocznosc</p><div class="ratingValue"><span>*<span><span>*<span><span>*<span><span>*<span><span>*<span></div> </div>
+<div class="rating-one" style="display: flex;justify-content: flex-start;"> <p class="ratingName">Ergonomia</p><div class="ratingValue"><span>*<span><span>*<span><span>*<span><span>*<span><span>*<span></div> </div>
+</div> 
+
+<div class="leftPart-one"> 
+<h3>Ekonomicznosc</h3>
+<div class="rating-one" style="display: flex;justify-content: flex-start;"> <p class="ratingName">Łatwosc utrzymania</p><div class="ratingValue"><span>*<span><span>*<span><span>*<span><span>*<span><span>*<span></div> </div>
+<div class="rating-one" style="display: flex;justify-content: flex-start;"> <p class="ratingName">Stosunek jakość/cena</p><div class="ratingValue"><span>*<span><span>*<span><span>*<span><span>*<span><span>*<span></div> </div>
+</div> 
+
+</div>
+<div class="rightPart-rating-container">
+<div class="pros-and-cons" style="display: flex;">
+<img src='https://dev.automotyw.com/wp-content/uploads/2021/08/rekagora.svg' >
+<div> <h3>Zalety</h3>
+<p>Silnik</p>
+<p>Przeniesienie napedu</p>
+</div>
+</div>
+<div class="pros-and-cons" style="display: flex;">
+<img src='https://dev.automotyw.com/wp-content/uploads/2021/08/rekadol.svg' >
+<div> <h3>Wady</h3>
+<p>Karosieria</p>
+<p>wyciszenie</p>
+</div>
+</div>
+</div>
+
+
+</div>`;
+console.log(fullString)
+
+  }
+
   let  sendFullDataToBackend = async() =>{
     let valueCheck =  checkArraysDataBeforeSend(wholeDataFormToSendCar, wholeDataFormToSendRating, wholeDataFormToSendCons, wholeDataFormToSendPros)
     console.log(valueCheck)
    if(!valueCheck.infoBolean){
     let fullDataToSend = {car:wholeDataFormToSendCar, ratings: wholeDataFormToSendRating, cons:wholeDataFormToSendCons, pros:wholeDataFormToSendPros}
-    console.log(fullDataToSend)
+    createScriptForMarks(fullDataToSend)
     const jSonToSend = JSON.stringify(fullDataToSend);
     const res = await axios.post('http://192.168.2.174/olek/podpanel_oceny/sendResponse.php', jSonToSend);
     console.log(valueCheck.info)
@@ -240,6 +343,10 @@ setWholeDataFormToSendPros(data)
     console.log("clear")
   }
 
+  let choosenEditDatatoWork=(choosenData) => {
+    console.log(choosenData)
+  }
+
 
 
 
@@ -261,7 +368,9 @@ setWholeDataFormToSendPros(data)
       {dataAvalEngine ?  (<CarSelector whichSelector={"Engines"} jsonFile={jsonFileEngine} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing5"   }
       {dataAvalGearbox ?  (<CarSelector whichSelector={"Gearboxes"} jsonFile={jsonFileGearbox} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing6"   }
       </div>
-      <div><h2>Edytuj Pojazd </h2> </div>
+      <div><h2>Edytuj Pojazd </h2> 
+      {editData ?(<EditSelector editData={editData} choosenEditDatatoWork={choosenEditDatatoWork}/>) : ("Loading...") }
+      </div>
 
       </div>
       
@@ -283,8 +392,8 @@ setWholeDataFormToSendPros(data)
       </Button>
       </div>
       {sendDataInfoBack}
-      
-       
+      <Card className={classes.root} variant="outlined">
+      <CardContent>
     
       
       {wholeDataFormToSendCar.map(function(d, idx){
@@ -304,8 +413,8 @@ setWholeDataFormToSendPros(data)
          return (<li key={idx}>{d.name}, {d.value}</li>)
        })}
         <br></br>
-  
- 
+        </CardContent>
+ </Card>
 
       
     </div>
