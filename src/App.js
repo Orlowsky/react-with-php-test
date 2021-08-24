@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import CarSelector from "./Components/CarSelector"
+import CarSelectorNewCheck from "./Components/CarSelectorNewCheck"
 import StarRatingWhole from "./Components/StarRatingWhole"
 import SliderForText from "./Components/SliderForText"
 import EditSelector from "./Components/EditSelector"
@@ -39,7 +40,7 @@ function App() {
   const [jsonFile,setJson] = useState(null);
   const [dataAvalMark,setDataAvalMark] = useState(false)
   const [jsonFileCarSetup,setJsonFileCarSetup] = useState({id:null,whichSelectorToChoose:null})
-
+  
   const [jsonFileModel,setJsonModel] = useState(null);
   const [dataAvalModel,setDataAvalModel] = useState(false)
 
@@ -62,19 +63,21 @@ function App() {
 
   const [sendDataInfoBack,setSendDataInfoBack] = useState(null)
 
-  const[ratingPageDataForPage,setRatingPageDataForPage] = useState(null)
+  const[ratingPageDataForPageWordpress,setRatingPageDataForPageWordpress] = useState(null)
 
-  let addValueToDataFormCar = (newDataName, newValueData ) =>{
+  let addValueToDataFormCar = (newDataName, newValueData, newDataRealName ) =>{
     const temporaryArray = [...wholeDataFormToSendCar]
     let temporaryCheck = false;
     for(let i=0;i<temporaryArray.length;i++){
       if(temporaryArray[i].dataName ===newDataName){
         temporaryArray[i].dataName = newDataName;
         temporaryArray[i].dataValue = newValueData;
+        temporaryArray[i].dataRealName = newDataRealName;
         temporaryCheck = true ;
       }
     }
-    temporaryCheck ? setWholeDataFormToSendCar([...temporaryArray]) : setWholeDataFormToSendCar([...wholeDataFormToSendCar, {dataName:newDataName, dataValue:newValueData}])
+    temporaryCheck ? setWholeDataFormToSendCar([...temporaryArray]) : setWholeDataFormToSendCar([...wholeDataFormToSendCar, {dataName:newDataName, dataValue:newValueData, dataRealName:newDataRealName}])
+ console.log(wholeDataFormToSendCar)
   }
   let addValueToDataFormRating = (newDataName, newValueData ) =>{
     const temporaryArray = [...wholeDataFormToSendRating]
@@ -102,7 +105,8 @@ setWholeDataFormToSendPros(data)
     
     const fetchData = async () => {
       const result = await axios(
-        'http://192.168.2.174/olek/podpanel_oceny/function.php',
+        /* 'https://dev2.automotyw.com/addRatings/backend/function.php', */
+        'http://192.168.2.174/olek/podpanel_oceny/backend/function.php',
        /*  'http://192.168.0.80/olek/react-with-php-test/function.php', */
       );
         
@@ -113,7 +117,8 @@ setWholeDataFormToSendPros(data)
     };
     const fetchEditData = async() => {
       const result = await axios(
-        'http://192.168.2.174/olek/podpanel_oceny/editData.php',
+        /* 'https://dev2.automotyw.com/addRatings/backend/editData.php', */
+        'http://192.168.2.174/olek/podpanel_oceny/backend/editData.php',
        
       );
       console.log(result.data)
@@ -124,7 +129,8 @@ setWholeDataFormToSendPros(data)
 
     const fetchDataModel = async () => {
       const result = await axios(
-        'http://192.168.2.174/olek/podpanel_oceny/function.php?id='+jsonFileCarSetup.id+"&whichSelector="+jsonFileCarSetup.whichSelectorToChoose,
+        /* 'https://dev2.automotyw.com/addRatings/backend/function.php?id='+jsonFileCarSetup.id+"&whichSelector="+jsonFileCarSetup.whichSelectorToChoose, */
+        'http://192.168.2.174/olek/podpanel_oceny/backend/function.php?id='+jsonFileCarSetup.id+"&whichSelector="+jsonFileCarSetup.whichSelectorToChoose,
       );
         
      /*  console.log(result.data) */
@@ -255,55 +261,81 @@ setWholeDataFormToSendPros(data)
   }
 
   let newArrayStar = (data,whichdata,text)=>{
-   return  `<div class="rating-one" style="display: flex;justify-content: flex-start;"> <p class="ratingName">${text}</p><div class="ratingValue">${new Array(data.ratings[whichdata].dataValue).fill(null).map(el=>"<img src='https://dev.automotyw.com/wp-content/uploads/2021/08/star_gold.svg'>")}</div> </div>`
+    console.log(data.ratings[whichdata].dataValue) 
+    var numberTofloor = Math.floor(data.ratings[whichdata].dataValue);
+    var decimalNumber = data.ratings[whichdata].dataValue - numberTofloor
+   let stringFullStars  =new Array(numberTofloor).fill(null).map(el=>"<img src='https://dev.automotyw.com/wp-content/uploads/2021/08/star_gold.svg'>").join("")
+   let stringhalfStar = ""
+   let stringEmptyStars = ""
+   if(decimalNumber> 0 ){
+    stringhalfStar = `<img src='https://dev.automotyw.com/wp-content/uploads/2021/08/starf_half.svg'></img>`
+    stringEmptyStars = new Array(4-numberTofloor).fill(null).map(el=>"<img src='https://dev.automotyw.com/wp-content/uploads/2021/08/star_gray.svg'>").join("")
+   }else{
+    stringEmptyStars = new Array(5-numberTofloor).fill(null).map(el=>"<img src='https://dev.automotyw.com/wp-content/uploads/2021/08/star_gray.svg'>").join("")
+   }
+    var fullString  = `<div class="rating-one" style="display: flex;justify-content: space-between;"><p class="ratingName">${text}</p><div class="ratingValue">${stringFullStars+stringhalfStar+stringEmptyStars}</div></div>`
+   return  fullString
   }
 
   let createScriptForMarks = (fullData) =>{
-
+   
     
       console.log(fullData)
       let array=[];
       let fullString = `
-    
-
 <h1>Oceny</h1>
-<h2> Mercedes GLS X166 Off-Tourer</h2>
+<h2>${fullData.car[0].dataRealName} ${fullData.car[1].dataRealName} ${fullData.car[2].dataRealName} ${fullData.car[3].dataRealName} ${fullData.car[4].dataRealName} ${fullData.car[5].dataRealName}</h2>
 <div id='ratingContainer' class='rating-container' style="
-display: flex;">
+display: flex;  justify-content: space-between;">
 <div class="leftPart-rating-container">
 <div class="leftPart-one"> 
-<h3>Wrażenia</h3>
+<h4>Wrażenia</h4>
 ${newArrayStar(fullData,0,"Całokształt")}
 ${newArrayStar(fullData,1,"Silnik")}
 ${newArrayStar(fullData,2,"Skrzynia Biegów")}
-${newArrayStar(fullData,2,"Układ Jezdny")}
+${newArrayStar(fullData,3,"Układ Jezdny")}
+${newArrayStar(fullData,4,"Karoseria")}
 </div> 
 <div class="leftPart-one"> 
-<h3>Komfort</h3>
-<div class="rating-one" style="display: flex;justify-content: flex-start;"> <p class="ratingName">widocznosc</p><div class="ratingValue"><span>*<span><span>*<span><span>*<span><span>*<span><span>*<span></div> </div>
-<div class="rating-one" style="display: flex;justify-content: flex-start;"> <p class="ratingName">Ergonomia</p><div class="ratingValue"><span>*<span><span>*<span><span>*<span><span>*<span><span>*<span></div> </div>
+<h4>Komfort</h4>
+${newArrayStar(fullData,5,"Widoczność")}
+${newArrayStar(fullData,6,"Ergonomia")}
+${newArrayStar(fullData,7,"Wentylacja i Ogrzewanie")}
+${newArrayStar(fullData,8,"Wyciszenie")}
+${newArrayStar(fullData,9,"Przestrzeń")}
 </div> 
-
 <div class="leftPart-one"> 
-<h3>Ekonomicznosc</h3>
-<div class="rating-one" style="display: flex;justify-content: flex-start;"> <p class="ratingName">Łatwosc utrzymania</p><div class="ratingValue"><span>*<span><span>*<span><span>*<span><span>*<span><span>*<span></div> </div>
-<div class="rating-one" style="display: flex;justify-content: flex-start;"> <p class="ratingName">Stosunek jakość/cena</p><div class="ratingValue"><span>*<span><span>*<span><span>*<span><span>*<span><span>*<span></div> </div>
+<h4>Ekonomiczność</h4>
+${newArrayStar(fullData,10,"Łatwość Utrzymania(koszt)")}
+${newArrayStar(fullData,11,"Stosunek jakość/cena")}
+</div> 
+<div class="leftPart-one"> 
+<h4>Bezawaryjność</h4>
+${newArrayStar(fullData,12,"Bezawaryjność (drobiazgi)")}
+${newArrayStar(fullData,13,"Bezawaryjność (poważne usterki")}
 </div> 
 
 </div>
 <div class="rightPart-rating-container">
-<div class="pros-and-cons" style="display: flex;">
-<img src='https://dev.automotyw.com/wp-content/uploads/2021/08/rekagora.svg' >
-<div> <h3>Zalety</h3>
-<p>Silnik</p>
-<p>Przeniesienie napedu</p>
+<div class="pros-and-cons" style="display: flex; ">
+<div style="width: 100%">
+<img style="width: 70%;margin-left: 15%;" src='https://dev.automotyw.com/wp-content/uploads/2021/08/rekagora.svg' >
+</div>
+<div> <h4 style="margin-top: 1rem;">Zalety</h4>
+${fullData.pros.map((el,index)=>{
+    return `<p class="textfield-zalety ${el.name}">${el.value}</p>`
+}).join("")}
+
 </div>
 </div>
 <div class="pros-and-cons" style="display: flex;">
-<img src='https://dev.automotyw.com/wp-content/uploads/2021/08/rekadol.svg' >
-<div> <h3>Wady</h3>
-<p>Karosieria</p>
-<p>wyciszenie</p>
+<div style="width: 100%">
+<img style="width: 70%;margin-left: 15%;" src='https://dev.automotyw.com/wp-content/uploads/2021/08/rekadol.svg' >
+</div>
+<div> <h4 style="margin-top: 1rem;">Wady</h4>
+${fullData.cons.map((el,index)=>{
+  return `<p class="textfield-zalety ${el.name}">${el.value}</p>`
+}).join("")}
 </div>
 </div>
 </div>
@@ -311,7 +343,9 @@ ${newArrayStar(fullData,2,"Układ Jezdny")}
 
 </div>`;
 console.log(fullString)
+let fullStringWithDOMFunction =   fullString 
 
+setRatingPageDataForPageWordpress(fullStringWithDOMFunction)
   }
 
   let  sendFullDataToBackend = async() =>{
@@ -321,7 +355,8 @@ console.log(fullString)
     let fullDataToSend = {car:wholeDataFormToSendCar, ratings: wholeDataFormToSendRating, cons:wholeDataFormToSendCons, pros:wholeDataFormToSendPros}
     createScriptForMarks(fullDataToSend)
     const jSonToSend = JSON.stringify(fullDataToSend);
-    const res = await axios.post('http://192.168.2.174/olek/podpanel_oceny/sendResponse.php', jSonToSend);
+    const res = await axios.post('http://192.168.2.174/olek/podpanel_oceny/backend/sendResponse.php', jSonToSend);
+    /* const res = await axios.post('https://dev2.automotyw.com/addRatings/backend/sendResponse.php', jSonToSend); */
     console.log(valueCheck.info)
     console.log(res)
     if(res.statusText === "OK"){
@@ -340,20 +375,54 @@ console.log(fullString)
   } 
 
   let clearAllData = () =>{
-    console.log("clear")
+    /* console.log("clear")
+    console.log(jsonFile,jsonFileModel,jsonFileGeneration,jsonFileBody,jsonFileEngine,jsonFileGearbox) */
+    setJson(null)
+    setJsonModel(null)
+    setJsonGeneration(null)
+    setJsonBody(null)
+    setJsonEngine(null)
+    setJsonGearbox(null)
+    setDataAvalGearbox(false)
+    setDataAvalEngine(false)
+    setDataAvalBody(false)
+    setDataAvalGeneration(false)
+    setDataAvalModel(false)
+    setDataAvalMark(false)
+    setJsonFileCarSetup({id:null,whichSelectorToChoose:null})
+  //wyczyszczenie gwiazdek poprzez funkcje do wnetrza
+   
+    
+    
+    setWholeDataFormToSendCar([])
+    setWholeDataFormToSendRating([])
+    setWholeDataFormToSendPros([])
+    setWholeDataFormToSendCons([])
   }
 
   let choosenEditDatatoWork=(choosenData) => {
     console.log(choosenData)
+    setWholeDataFormToSendCar(choosenData.car)
+    setWholeDataFormToSendRating(choosenData.ratings)
+    setWholeDataFormToSendPros(choosenData.pros)
+    setWholeDataFormToSendCons(choosenData.cons)
+    
+  
+    /* setDataAvalGeneration(true)
+    setDataAvalBody(true)
+    setDataAvalEngine(true)
+    setDataAvalGearbox(true) */ 
+
+ 
   }
 
 
 
 
-//czyscic dane ogolnie i gdy liczba pol zmaleje 
-// zabezpiecz pola przed nie wystawieniem ocen, zabezpiecz przed zmiana danych
-//dodaj do bazy i sprawdz czy sie udało i zwrotka
-// pobierz wszystkie oceny do edycji
+//EDYCJA POla kazdego, pobieram auta ale problemy z przekazaniem zmiennych 
+//czyszczenie danych, włacznie z wyczysczeniem pól po tych danych gwiazdki i wady i zalety bo pojazdy czysci FUNKCJE CZYSZCZACE OD WEWNATRZ
+//poprawic nazwe silnika 
+
 
   return (
     <div className="App">
@@ -361,7 +430,8 @@ console.log(fullString)
       <div style={{display:"flex", justifyContent:"center"}}>
       <div>
       <h2>Wybierz pojazd z listy </h2>
-      {dataAvalMark ?  (<CarSelector whichSelector={"Marks"} jsonFile={jsonFile} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing"   }
+      {/* {dataAvalMark ?  (<CarSelectorNewCheck whichSelector={"Marks"} jsonFile={jsonFile} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar} />) : "nothing"   } */}
+      {dataAvalMark ?  (<CarSelector whichSelector={"Marks"} jsonFile={jsonFile} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar} />) : "nothing"   }
       {dataAvalModel ?  (<CarSelector whichSelector={"Models"} jsonFile={jsonFileModel}  onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing2"   }
       {dataAvalGeneration ?  (<CarSelector whichSelector={"Generations"} jsonFile={jsonFileGeneration} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing3"   }
       {dataAvalBody ?  (<CarSelector whichSelector={"Bodies"} jsonFile={jsonFileBody} onSelectorClicked={onSelectorClicked} addValueToDataForm={addValueToDataFormCar}/>) : "nothing4"   }
@@ -375,7 +445,7 @@ console.log(fullString)
       </div>
       
       <h2>Wybierz ocene </h2>
-        <StarRatingWhole  addValueToDataForm={addValueToDataFormRating}/>
+        <StarRatingWhole  addValueToDataForm={addValueToDataFormRating} /* ratingsValuePassed={wholeDataFormToSendRating} *//>
         <h2>Podaj wady i zalety </h2>
     <div style={{display:"flex" }}>
     <SliderForText prosAndCons="Zalety" addValueToProsAndCons={addValueToProsAndCons}/>
@@ -394,24 +464,29 @@ console.log(fullString)
       {sendDataInfoBack}
       <Card className={classes.root} variant="outlined">
       <CardContent>
-    
-      
-      {wholeDataFormToSendCar.map(function(d, idx){
+      {ratingPageDataForPageWordpress ? (
+      <Button variant="contained"
+       color="secondary"
+       style={{backgroundColor:"green"}} onClick={() => {navigator.clipboard.writeText(ratingPageDataForPageWordpress)}}>
+       Skopiuj Element Do Schowka
+      </Button>): ""}
+      {ratingPageDataForPageWordpress ? (<p>{ratingPageDataForPageWordpress.substring(0, 200)+"..."}</p>): ""}
+      {!ratingPageDataForPageWordpress && (wholeDataFormToSendCar.map(function(d, idx){
          return (<li key={idx}>{d.dataName}, {d.dataValue}</li>)
-       })}
+       }))}
 
        <br></br>
-        {wholeDataFormToSendRating.map(function(d, idx){
+        { !ratingPageDataForPageWordpress && (wholeDataFormToSendRating.map(function(d, idx){
          return (<li key={idx}>{d.dataName}, {d.dataValue}</li>)
-       })}
+       }))}
  <br></br>
-{wholeDataFormToSendPros.map(function(d, idx){
+{ !ratingPageDataForPageWordpress && (wholeDataFormToSendPros.map(function(d, idx){
          return (<li key={idx}>{d.name}, {d.value}</li>)
-       })}
+       }))}
  <br></br>
-{wholeDataFormToSendCons.map(function(d, idx){
+{ !ratingPageDataForPageWordpress && (wholeDataFormToSendCons.map(function(d, idx){
          return (<li key={idx}>{d.name}, {d.value}</li>)
-       })}
+       }))}
         <br></br>
         </CardContent>
  </Card>

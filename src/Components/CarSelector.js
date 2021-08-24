@@ -23,11 +23,11 @@ const CarSelector = ({jsonFile,onSelectorClicked,whichSelector, addValueToDataFo
     const classes = useStyles();
     const [state, setState] = useState("");
 
-    let selectorChange= (e)=>{
+    let selectorChange= (e,child)=>{
       
         onSelectorClicked(e.target.value,whichSelector)
-        addValueToDataForm(whichSelector, e.target.value)
-        console.log(e)
+        addValueToDataForm(whichSelector, e.target.value, child.props.children)
+        console.log(e,child.props.children)
         setState(e.target.value)
       
     }

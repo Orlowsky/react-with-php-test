@@ -1,0 +1,7 @@
+wyszukiwanie w selectcie
+wlasciwosci silnikow
+Zamiast Selecta wady i zalety dodawac kolejny i kolejny plusami i minusami
+widok edycji był podobny do widoku wyswietlania 
+połaczenie oceny z dodawaniem nowego auta w przypadku jego braku spotkanie. 
+dodawać jsona albo js gotowego dod bazy , tworzyc link do bazy, przekazywać link do biblioteki z parametrami by wcynac jsona i obsluga jsona by wywołać kontent na stronie .
+czyli cos jak adquery dodawanie reklam. 

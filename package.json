@@ -1,5 +1,6 @@
 {
   "name": "podpanel_oceny",
+  "homepage": "https://dev2.automotyw.com/addRatings/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

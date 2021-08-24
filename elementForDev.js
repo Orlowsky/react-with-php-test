@@ -3,7 +3,7 @@ elem.innerHTML = `
 <h1>Oceny</h1>
 <h2> Mercedes GLS X166 Off-Tourer</h2>
 <div id='ratingContainer' class='rating-container' style="
-display: flex;">
+display: flex; justify-content: space-between;">
 <div class="leftPart-rating-container">
 <div class="leftPart-one"> 
 <h3>Wrażenia</h3>

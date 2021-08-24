@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useState, useEffect} from 'react'
 /* import Rating from '@material-ui/lab/Rating';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 
@@ -13,7 +13,7 @@ import Box from '@material-ui/core/Box';
 
 
 
-const StarRating = ({whichRating, dataRating, addValueToDataForm, id}) => {
+const StarRating = ({whichRating, dataRating, addValueToDataForm, id, /* dataRatingValueEdit */}) => {
   const [ratingValue, setRatingValue] = useState(0)
   let dataRatingNewTest = dataRating
   let addValueStar = (e) =>{
@@ -21,6 +21,11 @@ const StarRating = ({whichRating, dataRating, addValueToDataForm, id}) => {
     addValueToDataForm(dataRatingNewTest,Number(e.target.value))
     setRatingValue(Number(e.target.value))
   }
+  /* useEffect(() => {
+    
+    setRatingValue( Number(dataRatingValueEdit))
+    console.log("TUTAJ WORKINGG")
+  }, [dataRatingValueEdit]) */
 
     return (
         <div style={{width: "20%"}}>
