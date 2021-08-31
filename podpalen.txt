@@ -1,5 +1,5 @@
 wyszukiwanie w selectcie
-wlasciwosci silnikow
+
 Zamiast Selecta wady i zalety dodawac kolejny i kolejny plusami i minusami
 widok edycji był podobny do widoku wyswietlania 
 połaczenie oceny z dodawaniem nowego auta w przypadku jego braku spotkanie. 
